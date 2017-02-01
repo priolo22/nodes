@@ -1,0 +1,16 @@
+// Inserire le impostazioni in questo file per sovrascrivere quelle utente e predefinite.
+{
+
+    // Consente di configurare i criteri di ricerca GLOB per escludere file e cartelle.
+    "files.exclude": {
+        "**/.git": true
+        ,"**/.svn": true
+        ,"**/.hg": true
+        ,"**/.DS_Store": true
+        ,"**/*.js": { "when": "$(basename).ts"}
+        ,"**/*.js.map": true
+    }
+   
+,
+"typescript.tsdk": "./node_modules/typescript/lib"
+}
