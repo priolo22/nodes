@@ -7,6 +7,7 @@ class NodeManager {
         this.pipesIn = [];
         this.pipesOut = [];
         this.actions = [];
+        this.actionsHistory = [];
         this.remoteObjects = {};
     }
     // STATIC
@@ -46,8 +47,12 @@ class NodeManager {
         this.pipesIn.push(pipe);
         pipe.events.on("action", this.receiveActionFromPipeIn.bind(this));
     }
+    /**
+     * funzione richiamata quando arriva una nuova action da un pipe
+     */
     receiveActionFromPipeIn(action, pipe) {
         this.addAction(action);
+        this.flushActions(); //[II] il flush (quindi l'esecuzione delle action) va fatto in maniera strutturata e non semplicemente quando arriva una action. In maniera da garantire prestazioni e sincronizzazione
     }
     /**
      * E' il canale per inserire le action localmente
@@ -67,32 +72,40 @@ class NodeManager {
         this.pipesOut.push(pipe);
     }
     /**
+     * manda un action su tutti i pipe out
+     */
+    sendOut(action) {
+        this.pipesOut.forEach(pipe => {
+            pipe.send(action);
+        });
+    }
+    /**
      * Inserisco una nuova action nel node
      * serviranno ad aggiornare il suo stato.
      * invio l'action a tutti i nodi collegati tramite "pipe"
      */
     addAction(action) {
+        // [II] per prevenire i loop infiniti non inserisco action che sono gia' stati inseriti
+        // questo lo verifico con il tags ... ma devo trovare un sistema migliore
         if (action.tags.findIndex(this.id) != -1)
             return;
         action.tags.add(this.id);
+        // inserisco l'action nell'array
         this.actions.push(action);
-        this.pipesOut.forEach(pipe => {
-            pipe.send(action);
-        });
     }
     /**
      * Esegue tutte le action nel buffer
      * aggiorna lo stato
      * sposta le action eseguite correttamente nella history
      */
-    flush() {
+    flushActions() {
         let toHistory = [];
         let toActions = [];
         this.actions.forEach(action => {
             let result = action.execute(this);
-            (result == false ? toActions : toHistory).push(result);
+            (result == false ? toActions : toHistory).push(action);
         });
-        this.actionsHistory.concat(toHistory);
+        this.actionsHistory = this.actionsHistory.concat(toHistory);
         this.actions = toActions;
     }
     // ACTION: Creazione di una nuova istanza
@@ -100,6 +113,12 @@ class NodeManager {
     addRemoteObject(ro) {
         ro.key = new Date().getTime();
         this.remoteObjects[ro.key] = ro;
+    }
+    findRemoteObject(id) {
+        let instance = this.remoteObjects[id];
+        if (!instance)
+            return;
+        return instance;
     }
 }
 NodeManager._Current = null;

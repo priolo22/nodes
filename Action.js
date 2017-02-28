@@ -1,5 +1,6 @@
 "use strict";
 const Tags_1 = require("./Tags");
+const RemoteObjectDecorators_1 = require("./RemoteObjectDecorators");
 /**
  * Permette di memorizzare un' "azione" che aggiorna un "nodo"
  * Un Action puo' far riferiemnto a:
@@ -27,28 +28,59 @@ class Action {
     get type() {
         return this._type;
     }
+    // sono dei tag che qualificano l'action 
     get tags() {
         return this._tags;
     }
 }
 exports.Action = Action;
 class ActionInstanceNew extends Action {
-    constructor(instance) {
+    constructor(className, instance) {
         super(ACTION_TYPE.INSTANCE_CREATE);
-        if (instance instanceof String) {
-            this.instanceName = instance.toString();
-        }
-        else {
-            this.instance = instance;
-            this.instanceName = this.instance.constructor.name;
-        }
+        this.instance = instance;
+        this.instanceName = className;
     }
     execute(node) {
         if (this.instance == null) {
-            this.instance = new global[this.instance]();
+            this.instance = new global[this.instanceName]();
         }
         node.addRemoteObject(this.instance);
     }
 }
 exports.ActionInstanceNew = ActionInstanceNew;
+class ActionPropertyChange extends Action {
+    constructor(instanceId, propertyName, newValue) {
+        super(ACTION_TYPE.PROPERTY_CHANGE);
+        this.propertyName = propertyName;
+        this.newValue = newValue;
+    }
+    execute(node) {
+        let obj = node.findRemoteObject(this.instanceId);
+        if (obj == null)
+            return;
+        obj[this.propertyName] = this.newValue;
+        node.sendOut(this);
+    }
+}
+exports.ActionPropertyChange = ActionPropertyChange;
+class ActionMethodCall extends Action {
+    constructor(instanceId) {
+        super(ACTION_TYPE.METHOD_CALL);
+    }
+    execute(node) {
+        let obj = node.findRemoteObject(this.instanceId);
+        // capire se questo metodo è implementato o meno
+        let methodType = RemoteObjectDecorators_1.REMOTE_METHOD_TYPE.ABSTRACT;
+        // *********************************************
+        switch (methodType) {
+            case RemoteObjectDecorators_1.REMOTE_METHOD_TYPE.ABSTRACT:
+                node.sendOut(this);
+                break;
+            case RemoteObjectDecorators_1.REMOTE_METHOD_TYPE.IMPLEMENTED:
+                obj[this.methodName](this.params);
+                break;
+        }
+    }
+}
+exports.ActionMethodCall = ActionMethodCall;
 //# sourceMappingURL=Action.js.map

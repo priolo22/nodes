@@ -2,6 +2,7 @@
 class PipeOut {
 }
 exports.PipeOut = PipeOut;
+// permette di trasferire un action direttamente all'interno dello stesso programma
 class PipeOutJunction extends PipeOut {
     constructor(pipeIn) {
         super();

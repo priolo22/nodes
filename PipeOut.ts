@@ -14,6 +14,7 @@ export abstract class PipeOut implements IPipeOut {
     
 }
 
+// permette di trasferire un action direttamente all'interno dello stesso programma
 export class PipeOutJunction extends PipeOut {
     constructor ( private pipeIn:PipeIn ) {
         super();
