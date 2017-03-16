@@ -1,61 +1,64 @@
-// serve per i decorator
+/// <reference path="types/express/express.d.ts" />
+/// <reference path="types/body-parser/body-parser.d.ts" />
+/// <reference path="types/formidable/formidable.d.ts" />
+
 import "reflect-metadata";
-
-import { NodeManager } from "./NodeManager";
-import { RemoteObject } from "./RemoteObject";
-import { REMOTE_METHOD_TYPE, RemoteMethod, RemoteProperty, RemoteClass } from "./RemoteObjectDecorators";
-import { PipeIn, PipeInLocal } from "./PipeIn";
-import { PipeOut, PipeOutJunction, PipeOutLocal } from "./PipeOut";
-
-import { ACTION_TYPE, Action, ActionInstanceNew } from "./Action";
-
-
-let node1 = new NodeManager();
-let node2 = new NodeManager();
-
-node1.addPipeOut(new PipeOutJunction(node2.pipeInLocal));
-node2.addPipeOut(new PipeOutJunction(node1.pipeInLocal));
+// server http minimalista
+import * as express from "express";
+// serve a parsare i parametri del bodi per il metodo POST
+import * as bodyParser from "body-parser";
+// serve per formattare i dati con il form-data
+import * as formidable from "formidable";
+// per la manipolazione dei file
+import * as fs from "fs";
+// per creare la connessione al db
+import { createConnection } from "typeorm";
 
 
-
-//@RemoteClass(node1)
-class User {
-    
-    @RemoteProperty(node1)
-    public name: string;
-
-    @RemoteProperty(node1)
-    public surname: string;
-
-    @RemoteMethod(REMOTE_METHOD_TYPE.ABSTRACT, node1)
-    public async fullname(param: string) {}
-}
-
-/*
-@RemoteClass(node2,"User")
-class User2 {
-
-    @RemoteProperty(node2)
-    public name:string = "";
-
-    @RemoteProperty(node2)
-    public surname:string = "";
-
-    @RemoteMethod(REMOTE_METHOD_TYPE.IMPLEMENTED, node2)
-    public async fullname ( param:string ): Promise<String> {
-        return  this.name + param + this.surname;
-    }
-}
-*/
+import { NodeManager } from "libs/ro/NodeManager";
+import { PipeInExpress } from "libs/ro/pipesIn/PipeInExpress";
 
 
-let user = new User();
-user.name = "ivano";
-user.surname = "iorio";
-console.log(user.fullname(" - "));
+// creo il server
+let app = express();
+// uso il body parser per poter gestire i parametri nel body mandati in POST
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// connessione con router DB
+//app.use("/photos", routerPhotos);
+//app.use("/users", routerUsers);
+//app.use("/posts", routerPosts);
+
+let node = new NodeManager();
+node.name = "testServer";
+node.addPipeIn ( new PipeInExpress(node,app) );
 
 
-// node1.sync().then ( ()=>{
-//     console.log("tutto sincronizzato");
-// });
 
+// connessione al DB
+createConnection({
+	//name: "test",
+	driver: {
+		type: "sqlite",
+		storage: "./db/db.sqlite",
+		//host: "localhost",
+		//port: 3306,
+		username: "",
+		password: "",
+		database: "test"
+	},
+	entities: [
+		__dirname + "/models/*.js"
+	],
+	logging: {
+		logQueries: true,
+	},
+	autoSchemaSync: true,
+
+}).then(connection => {
+	app.listen(3000, () => {
+		console.log("Example app listening on port 3000!");
+	});
+
+}).catch(error => console.log(error));

@@ -1,0 +1,69 @@
+
+.drawer {
+    position: relative;
+    width: 225px;
+    color: white;
+    -webkit-box-shadow: 15px 0px 36px 0px rgba(0,0,0,0.09);
+    -moz-box-shadow: 15px 0px 36px 0px rgba(0,0,0,0.09);
+    box-shadow: 15px 0px 36px 0px rgba(0,0,0,0.09);
+}
+.drawer-open::-webkit-scrollbar-track {
+	background-color: #1B75BA;
+}
+.drawer-open::-webkit-scrollbar {
+	width: 5px;
+	background-color: #1B75BA;
+}
+.drawer-open::-webkit-scrollbar-thumb {
+	background-color: #01a9e8;
+}
+
+.drawer-open {
+    background-color: #212121;
+    position: absolute;
+    width: 225px;
+    height: 100%;
+    top: 0px;
+    right: 0px;
+    overflow-y: auto;
+}
+
+.drawer-close {
+    background-color: #212121;
+    position: absolute;
+    display: none;
+    width: 50px;
+    height: 100%;
+    top: 0px;
+    right: 0px;
+}
+
+
+
+.content {
+    background-color: #EEEEEE;
+}
+
+.shadow {
+    -webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.49);
+    -moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.49);
+    box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.49);
+}
+
+.title-box {
+    background-color: white;
+    height: 90px;
+    position: relative;
+    z-index: 1;
+}
+
+.title-row1 {
+    font-size: 27px;
+    font-weight: bold;
+}
+
+.title-row2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 7px;
+}
