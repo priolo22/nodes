@@ -29,9 +29,18 @@ class Action {
     get type() {
         return this._type;
     }
+    // metadata
+    // sono tutti i dati di questa action tra cui:
+    // -id nodo di creazione
+    // -data di creazione
+    // -array id nodi e data in cui è stata inserita
     // sono dei tag che qualificano l'action 
     get tags() {
         return this._tags;
+    }
+    onInPipe() {
+    }
+    onOutPipe() {
     }
     clone(action) {
         if (action == null)
@@ -56,6 +65,8 @@ class ActionInstanceNew extends Action {
         }
         this.instanceId = node.setKeyInObject(this.instance, this.instanceId);
         node.addRemoteObject(this.instance, this.instanceId);
+        // [II] queto lo deve fare l'evento "OnExecute" che va implementato sul pipe o sul nodo
+        // oppure no... forse va fatto sul nodoin base ai pipe che ho a disposizione e all'action che devo mandare
         // lo mando fuori
         node.sendOut(this.clone());
     }

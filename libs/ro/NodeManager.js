@@ -79,6 +79,13 @@ class NodeManager {
         this.pipesOut.push(pipe);
     }
     /**
+     * inserisce un nuovo canale di input
+     * cioe' che riceve action
+     */
+    removePipeOut(pipe) {
+        this.pipesOut.remove(pipe);
+    }
+    /**
      * manda un action su tutti i pipe out
      */
     sendOut(action) {

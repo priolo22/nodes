@@ -8,10 +8,15 @@ class PipeInExpress extends PipeIn_1.PipeIn {
         this.app = app;
         app.post("/ro/action", (req, res, next) => {
             let jsonAction = req.body.action;
-            let action; // DA FARE
+            let action; // DA FARE: deserializzazione action
             let pipeOut = new PipeOutExpressResponse_1.PipeOutExpressResponse(res);
             this.parent.addPipeOut(pipeOut);
-            this.events.emit("action", action);
+            // SPECIALIZZAZIONE DELL'ACTION IN BASE AL PIPE
+            action.onOutPipe = () => {
+                pipeOut.send(action);
+                this.parent.removePipeOut(pipeOut);
+            };
+            this.push(action);
         });
     }
 }

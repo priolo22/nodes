@@ -73,8 +73,7 @@ PageTest1Component = __decorate([
             ])
         ],
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof core_1.ElementRef !== "undefined" && core_1.ElementRef) === "function" && _a || Object])
+    __metadata("design:paramtypes", [core_1.ElementRef])
 ], PageTest1Component);
 exports.PageTest1Component = PageTest1Component;
-var _a;
 //# sourceMappingURL=page-test1.component.js.map

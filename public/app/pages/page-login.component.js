@@ -50,8 +50,7 @@ PageLoginComponent = __decorate([
         selector: "page-login",
         templateUrl: "app/pages/page-login.component.html",
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof core_1.ElementRef !== "undefined" && core_1.ElementRef) === "function" && _a || Object])
+    __metadata("design:paramtypes", [core_1.ElementRef])
 ], PageLoginComponent);
 exports.PageLoginComponent = PageLoginComponent;
-var _a;
 //# sourceMappingURL=page-login.component.js.map

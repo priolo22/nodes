@@ -18,6 +18,11 @@ export abstract class PipeIn {
         this._events = new EventEmitter();
     }
 
+    public push ( action:Action ) {
+        action.onInPipe();
+        this.events.emit ( "action", action );
+    }
+
     // PROPERTIES
     public get events():EventEmitter {
         return this._events;

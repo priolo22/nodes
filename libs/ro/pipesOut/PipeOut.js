@@ -9,7 +9,8 @@ class PipeOutJunction extends PipeOut {
         this.pipeIn = pipeIn;
     }
     send(action) {
-        this.pipeIn.events.emit("action", action);
+        action.onOutPipe();
+        this.pipeIn.push(action);
     }
 }
 exports.PipeOutJunction = PipeOutJunction;

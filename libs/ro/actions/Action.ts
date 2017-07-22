@@ -34,6 +34,13 @@ export abstract class Action implements ITaggable {
     }
     private _type:ACTION_TYPE = ACTION_TYPE.UNKNOW;
 
+    // metadata
+    // sono tutti i dati di questa action tra cui:
+    // -id nodo di creazione
+    // -data di creazione
+    // -array id nodi e data in cui è stata inserita
+
+
     // sono dei tag che qualificano l'action 
     public get tags():Tags {
         return this._tags;
@@ -45,6 +52,14 @@ export abstract class Action implements ITaggable {
      * Esegue l'action nel contesto specificato nel paramentro "node"
      */
     public abstract execute ( node:NodeManager );
+
+    public onInPipe () {
+        
+    }
+
+    public onOutPipe () {
+
+    }
 
     public clone(action?:Action): Action {
         if ( action == null ) return null;
@@ -72,6 +87,8 @@ export class ActionInstanceNew extends Action {
         this.instanceId = node.setKeyInObject (this.instance, this.instanceId);
         node.addRemoteObject ( this.instance, this.instanceId );
 
+        // [II] queto lo deve fare l'evento "OnExecute" che va implementato sul pipe o sul nodo
+        // oppure no... forse va fatto sul nodoin base ai pipe che ho a disposizione e all'action che devo mandare
         // lo mando fuori
         node.sendOut ( this.clone() );
     }
@@ -114,7 +131,6 @@ export class ActionPropertyChange extends Action {
         return super.clone(a);
     }
 }
-
 
 export class ActionMethodCall extends Action {
 

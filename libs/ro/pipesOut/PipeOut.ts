@@ -21,7 +21,8 @@ export class PipeOutJunction extends PipeOut {
     }
 
     public send ( action:Action ): void {
-        this.pipeIn.events.emit ( "action", action );
+        action.onOutPipe();
+        this.pipeIn.push ( action );
     }
 }
 

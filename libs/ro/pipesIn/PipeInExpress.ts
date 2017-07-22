@@ -14,12 +14,19 @@ export class PipeInExpress extends PipeIn {
         app.post("/ro/action", (req, res, next) => {
 
             let jsonAction = req.body.action;
-            let action:Action; // DA FARE
+            let action:Action; // DA FARE: deserializzazione action
 
             let pipeOut = new PipeOutExpressResponse ( res );
-            this.parent.addPipeOut ( pipeOut );
 
-            this.events.emit ( "action", action );
+            this.parent.addPipeOut ( pipeOut );
+            
+            // SPECIALIZZAZIONE DELL'ACTION IN BASE AL PIPE
+            action.onOutPipe = () => {
+                pipeOut.send(action);
+                this.parent.removePipeOut(pipeOut);
+            };
+
+            this.push ( action );
         });
     }
 }

@@ -107,6 +107,14 @@ export class NodeManager  {
     }
 
     /**
+     * inserisce un nuovo canale di input
+     * cioe' che riceve action
+     */
+    public removePipeOut ( pipe:PipeOut ): void {
+        this.pipesOut.remove(pipe);
+    }
+
+    /**
      * manda un action su tutti i pipe out
      */
     public sendOut ( action:Action ): void {

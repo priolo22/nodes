@@ -14,9 +14,9 @@ import * as fs from "fs";
 // per creare la connessione al db
 import { createConnection } from "typeorm";
 
+import { NodeManager } from "./libs/ro/NodeManager";
+import { PipeInExpress } from "./libs/ro/pipesIn/PipeInExpress";
 
-import { NodeManager } from "libs/ro/NodeManager";
-import { PipeInExpress } from "libs/ro/pipesIn/PipeInExpress";
 
 
 // creo il server
@@ -24,6 +24,23 @@ let app = express();
 // uso il body parser per poter gestire i parametri nel body mandati in POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// setto la directory con le risorse statiche
+var options = {
+	//dotfiles: "ignore",
+	etag: false,
+	//extensions: ["htm", "html"],
+	//index: true,
+	//maxAge: "1d",
+	//redirect: false,
+	//setHeaders: (res, path, stat) => {
+	//	res.set("x-timestamp", Date.now());
+	//}
+}
+app.use(express.static("public"/*, options*/));
+app.use("/node_modules", express.static("node_modules", options));
+app.use("/libs", express.static("libs"/*, options*/));
+
 
 // connessione con router DB
 //app.use("/photos", routerPhotos);
